@@ -45,6 +45,53 @@ local function makeBtn(text, color, x)
     return b
 end
 
+-- ===== WINDOW STATE =====
+local minimized = false
+local maximized = false
+
+local normalSize = Window.Size
+local normalPos = Window.Position
+
+-- CLOSE
+CloseBtn.MouseButton1Click:Connect(function()
+    Gui:Destroy()
+end)
+
+-- MINIMIZE
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+
+    for _, v in ipairs(Window:GetChildren()) do
+        if v ~= Top then
+            v.Visible = not minimized
+        end
+    end
+
+    if minimized then
+        Window.Size = UDim2.fromOffset(normalSize.X.Offset, Top.Size.Y.Offset)
+    else
+        Window.Size = normalSize
+    end
+end)
+
+-- MAXIMIZE / RESTORE
+MaxBtn.MouseButton1Click:Connect(function()
+    maximized = not maximized
+
+    if maximized then
+        normalSize = Window.Size
+        normalPos = Window.Position
+
+        Window.AnchorPoint = Vector2.new(0.5, 0.5)
+        Window.Position = UDim2.fromScale(0.5, 0.5)
+        Window.Size = UDim2.fromScale(1, 1)
+    else
+        Window.Size = normalSize
+        Window.Position = normalPos
+    end
+end)
+
+
 local MinBtn = makeBtn("–", Color3.fromRGB(70,70,70), 0)
 local MaxBtn = makeBtn("□", Color3.fromRGB(70,70,70), 34)
 local CloseBtn = makeBtn("×", Color3.fromRGB(180,60,60), 68)
@@ -84,4 +131,38 @@ Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 8)
 Btn.MouseButton1Click:Connect(function()
     print("Hello from Fluent-style UI!")
 end)
+
+-- ===== DRAG WINDOW =====
+local UIS = game:GetService("UserInputService")
+
+local dragging = false
+local dragStart
+local startPos
+
+Top.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Window.Position
+    end
+end)
+
+Top.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        Window.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
 
