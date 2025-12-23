@@ -25,6 +25,31 @@ Top.BackgroundColor3 = Color3.fromRGB(28,28,28)
 Top.BorderSizePixel = 0
 Instance.new("UICorner", Top).CornerRadius = UDim.new(0, 12)
 
+-- Window controls
+local Controls = Instance.new("Frame", Top)
+Controls.Size = UDim2.fromOffset(96, 28)
+Controls.Position = UDim2.new(1, -104, 0.5, -14)
+Controls.BackgroundTransparency = 1
+
+local function makeBtn(text, color, x)
+    local b = Instance.new("TextButton", Controls)
+    b.Size = UDim2.fromOffset(28, 28)
+    b.Position = UDim2.fromOffset(x, 0)
+    b.Text = text
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 14
+    b.TextColor3 = Color3.new(1,1,1)
+    b.BackgroundColor3 = color
+    b.BorderSizePixel = 0
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
+    return b
+end
+
+local MinBtn = makeBtn("–", Color3.fromRGB(70,70,70), 0)
+local MaxBtn = makeBtn("□", Color3.fromRGB(70,70,70), 34)
+local CloseBtn = makeBtn("×", Color3.fromRGB(180,60,60), 68)
+
+
 local Title = Instance.new("TextLabel", Top)
 Title.Size = UDim2.new(1, -20, 1, 0)
 Title.Position = UDim2.fromOffset(16, 0)
